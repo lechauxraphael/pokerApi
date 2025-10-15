@@ -4,7 +4,6 @@
 
 🔐 Authentification
   POST → http://localhost:8800/api/auth/register
-  
   Crée un compte utilisateur
   
   POST → http://localhost:8800/api/auth/login
