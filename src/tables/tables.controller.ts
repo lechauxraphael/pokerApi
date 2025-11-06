@@ -14,4 +14,14 @@ export class TablesController {
     findAll(){
         return this.tablesService.findAll();
     }
+
+    @Get('deck')
+    findDeck(){
+        return this.tablesService.findDeck();
+    }
+
+    @Get('deckshuffle')
+    shuffle(){
+        return this.tablesService.shuffle();
+    }
 }
