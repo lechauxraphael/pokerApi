@@ -1,4 +1,4 @@
-
+import * as bcrypt from 'bcrypt'
 import { Injectable } from '@nestjs/common';
 
 export type User = {
@@ -7,25 +7,21 @@ export type User = {
     password: string;
 }
 
+
 @Injectable()
 export class UsersService {
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-    },
-    {
-      userId: 3,
-      username: 'alex',
-      password: 'secret123',
-    }
-  ];
+  private users: User[] = [];
+
+  private nextUserId = 1;
+
+  async create(user: { username: string; password: string }) {
+    const newUser: User = {
+      userId: this.nextUserId++,
+      ...user,
+    };
+    this.users.push(newUser);
+    return newUser;
+  }
 
   async findOne(username: string): Promise<User | undefined> {
     return this.users.find(user => user.username === username);
