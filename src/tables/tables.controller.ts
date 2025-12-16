@@ -27,6 +27,6 @@ export class TablesController {
 
     @Post('distribute')
         distribute(@Body('deck') deck?: any[]) {
-        return this.tablesService.distribute(deck);
+        return this.tablesService.distribute();
     }
 }
