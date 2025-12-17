@@ -11,6 +11,14 @@ export class AuthService {
   ) {}
 
   async register(username: string, password: string) {
+
+     const existingUser = await this.usersService.findOne(username);
+        if (existingUser) {
+          return {
+            success: false,
+            message: 'Ce nom d’utilisateur existe déjà',
+          };
+        }
     // hash du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
