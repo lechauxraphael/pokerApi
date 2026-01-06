@@ -49,7 +49,7 @@ export class TablesController {
     shuffle() {
         return this.tablesService.shuffle();
     }
-    
+
     @UseGuards(AuthGuard)
     @Post(':tableName/deck/distribute')
     distribute(@Param('tableName') tableName: string) {
@@ -100,6 +100,16 @@ export class TablesController {
         return this.tablesService.getCardById(tableName, Number(id));
     }
 
+    @UseGuards(AuthGuard)
+    @Post(':tableName/blind')
+    setBlind(
+        @Param('tableName') tableName: string,
+        @Body('type') type: 'big' | 'small' | 'neutre',
+        @Req() req: IAuthInfoRequest
+    ) {
+        const user = req.user;
+        return this.tablesService.setBlind(tableName, user.sub, type);
+    }
 
     // =========================
     // DYNAMIC

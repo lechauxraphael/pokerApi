@@ -9,6 +9,7 @@ export class TablesService {
             userId: number;
             username: string;
             hand?: any[];
+            blind?: 'big' | 'small' | 'neutre';
         }[];
         deck: any[];
     }[] = [];
@@ -124,4 +125,30 @@ export class TablesService {
 
         return this.decksService.getCardById(table.deck, id);
     }
+
+    setBlind(
+    tableName: string,
+    userId: number,
+    type: 'big' | 'small' | 'neutre'
+    ) {
+    const table = this.findTable(tableName);
+    if (!table) throw new NotFoundException('Table non trouvée');
+
+    const player = table.players.find(p => p.userId === userId);
+    if (!player) throw new NotFoundException('Joueur non trouvé à la table');
+
+    if (!['big', 'small', 'neutre'].includes(type)) {
+        throw new BadRequestException('Type de blind invalide');
+    }
+
+    player.blind = type;
+
+    return {
+        table: table.name,
+        userId: player.userId,
+        username: player.username,
+        blind: player.blind,
+    };
+}
+
 }
