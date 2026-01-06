@@ -59,7 +59,7 @@
 
 🎮 Parties
 
-  POST → POST /api/tables/:tableName/games
+  POST → http://localhost:8800/api/tables/:tableName/games
   Lance une nouvelle partie (privé)
   
   GET → http://localhost:8800/api/tables/games
@@ -93,11 +93,11 @@
 
   ⚙️ Déroulement typique d’une partie
 
-  Connexion / Authentification
-  Choix d’une table
-  Vérification de l’argent disponible
-  Rejoindre la table
-  Affichage des cartes (uniquement celles du joueur connecté)
-  Affichage du rôle (big_blind, small_blind ou neutre)
-  Choix des actions (fold, check, call, raise, all-in)
-  Quitter la table
+      - Connexion / Authentification
+      - Choix d’une table
+      - Vérification de l’argent disponible
+      - Rejoindre la table
+      - Affichage des cartes (uniquement celles du joueur connecté)
+      - Affichage du rôle (big_blind, small_blind ou neutre)
+      - Choix des actions (fold, check, call, raise, all-in)
+      - Quitter la table

@@ -14,4 +14,12 @@ export class User {
 
   @Column()
   money: number;
+
+  // Nouvelle colonne pour suivre combien d'euros ont été ajouté aujourd'hui
+  @Column({ type: 'float', default: 0 })
+  dailyDeposit: number;
+
+  // Nouvelle colonne pour stocker la date du dernier dépôt
+  @Column({ type: 'date', nullable: true })
+  lastDepositDate: string;
 }
