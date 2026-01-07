@@ -1,18 +1,18 @@
 meta {
-  name: Create user
+  name: se connecter
   type: http
-  seq: 1
+  seq: 4
 }
 
-get {
-  url: http://localhost:3030/users
+post {
+  url: http://localhost:3030/auth/login
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "username": "raph",
+    "username": "val",
     "password": "mdp"
   }
 }

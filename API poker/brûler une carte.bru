@@ -1,0 +1,16 @@
+meta {
+  name: brûler une carte
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:3030/tables/Table1/deck/burn
+  body: json
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
