@@ -1,6 +1,12 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { DecksService } from 'src/decks/decks.service';
 import { PokerAction } from './tables.types';
+import { UsersService } from 'src/users/users.service';
+import { IntegerType } from 'typeorm';
+import { User } from 'src/users/user.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
 @Injectable()
 export class TablesService {
     private tables: {
@@ -11,6 +17,8 @@ export class TablesService {
             hand?: any[];
             blind?: 'big' | 'small' | 'neutre';
             folded?: boolean;
+            allIn?: boolean;
+            check?: boolean;
             currentBet?: number;
         }[];
         deck: any[];
@@ -25,7 +33,11 @@ export class TablesService {
         }[];
     }[] = [];
 
-    constructor(private readonly decksService: DecksService) {
+    constructor(private readonly decksService: DecksService
+        , private readonly usersService: UsersService,   
+         @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    ) {
         this.tables = [
             {
                 name: 'Table1',
@@ -198,6 +210,39 @@ export class TablesService {
         );
     }
 
+    async allIn(userId: number){
+        const user = await this.usersService.findOnePlayer(userId);
+        if (!user) throw new NotFoundException('Utilisateur non trouvé');
+        const allIn = user?.money;
+        user.money = 0;
+        await this.usersRepository.save(user);
+        return allIn;
+    }   
+
+
+    async raise(userId: number, tableName: string, somme: number){
+
+        const table = this.findTable(tableName);
+        if (!table) throw new BadRequestException('Table non trouvée');
+
+        const player = table.players.find(p => p.userId === userId);
+        if (!player) throw new BadRequestException('Vous n’êtes pas à cette table');
+
+        const user = await this.usersService.findOnePlayer(userId);
+        if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
+        const moneyUser = user?.money; // Argent actuel de l'utilisateur
+        const sommeARaiser = somme; // Somme que l'utilisateur veut miser
+
+        if(moneyUser < sommeARaiser){
+            throw new BadRequestException('Fonds insuffisants pour cette mise');
+        }
+
+        user.money = moneyUser - sommeARaiser; // Déduire la somme du solde de l'utilisateur
+        await this.usersRepository.save(user);
+        return {username: user.username, sommeMisé : sommeARaiser, argentRestant: user.money};
+    }
+
     performAction(
         userId: number,
         tableName: string,
@@ -221,15 +266,17 @@ export class TablesService {
                 player.folded = true;
                 return { action: 'fold' };
             case 'check':
+                player.check = true
                 return { action: 'check' };
             case 'call':
+                // TODO: gérer les mises
                 return { action: 'call' };
             case 'raise':
-                throw new BadRequestException('Raise pas encore implémenté');
-            case 'all-in':
-                throw new BadRequestException('All-in pas encore implémenté');
+            case 'all-in':     
+                player.allIn = true;
+                return this.allIn(userId);       
             default:
-                throw new BadRequestException('Action inconnue');
+                throw new NotImplementedException('Action inconnue');
         }
     }
 }

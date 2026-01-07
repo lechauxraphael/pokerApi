@@ -71,7 +71,18 @@ export class TablesController {
 
         const result = await this.tablesService.performAction(req.user.sub, tableName, type);
 
-        return { success: true, result };
+        return { success: true, username: req.user.username, result };
+    }
+
+    @UseGuards(AuthGuard)
+    @Post(':tableName/action/raise')
+    async raise(
+        @Req() req: IAuthInfoRequest,
+        @Param('tableName') tableName: string,
+        @Body('somme') somme: number,
+    ){
+        const user = req.user;
+        return this.tablesService.raise(req.user.sub, tableName, somme);
     }
 
     // =========================
