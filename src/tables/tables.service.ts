@@ -240,6 +240,10 @@ export class TablesService {
 
         const user = await this.usersService.findOnePlayer(userId);
         if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
+        if (player.folded) {
+            throw new BadRequestException('Vous avez déjà fold');
+        }
         const allIn = user?.money;
         user.money = 0;
         await this.usersRepository.save(user);
@@ -255,6 +259,7 @@ export class TablesService {
 
         const user = await this.usersService.findOnePlayer(userId);
         if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
         player.folded = true;
         return { username: user.username, action: PokerAction.FOLD };
     }
@@ -268,6 +273,11 @@ export class TablesService {
 
         const user = await this.usersService.findOnePlayer(userId);
         if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
+        if (player.folded) {
+            throw new BadRequestException('Vous avez déjà fold');
+        }
+
         player.check = true;
         return { username: user.username, action: PokerAction.CHECK };
     }
@@ -281,6 +291,10 @@ export class TablesService {
 
         const user = await this.usersService.findOnePlayer(userId);
         if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
+        if (player.folded) {
+            throw new BadRequestException('Vous avez déjà fold');
+        }
 
         const moneyUser = user?.money; // Argent actuel de l'utilisateur
         const sommeACall = player.currentBet ?? 0; // Somme que l'utilisateur veut miser
@@ -307,6 +321,10 @@ export class TablesService {
 
         const user = await this.usersService.findOnePlayer(userId);
         if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
+        if (player.folded) {
+            throw new BadRequestException('Vous avez déjà fold');
+        }
 
         const moneyUser = user?.money; // Argent actuel de l'utilisateur
         const sommeARaiser = Number(somme); // Somme que l'utilisateur veut miser
