@@ -132,13 +132,39 @@ export class TablesService {
         return this.decksService.getCardById(table.deck, id);
     }
 
-    setBlind(
-        tableName: string,
-        userId: number,
-        type: 'big' | 'small' | 'neutre'
-    ) {
+    // setBlind(
+    //     tableName: string,
+    //     userId: number,
+    //     type: 'big' | 'small' | 'neutre'
+    // ) {
+    //     const table = this.findTable(tableName);
+    //     if (!table) throw new NotFoundException('Table non trouvée');
+
+    //     const player = table.players.find(p => p.userId === userId);
+    //     if (!player) throw new NotFoundException('Joueur non trouvé à la table');
+
+    //     if (!['big', 'small', 'neutre'].includes(type)) {
+    //         throw new BadRequestException('Type de blind invalide');
+    //     }
+
+    //     player.blind = type;
+
+    //     return {
+    //         table: table.name,
+    //         userId: player.userId,
+    //         username: player.username,
+    //         blind: player.blind,
+    //     };
+    // }
+    createGame(tableName: string, userId: number, type: 'big' | 'small' | 'neutre') {
         const table = this.findTable(tableName);
-        if (!table) throw new NotFoundException('Table non trouvée');
+        if (!table) {
+            throw new NotFoundException('Table non trouvée');
+        }
+
+        if (table.players.length <= 2) {
+            throw new BadRequestException('Il faut au moins 3 joueurs pour lancer une partie');
+        }
 
         const player = table.players.find(p => p.userId === userId);
         if (!player) throw new NotFoundException('Joueur non trouvé à la table');
@@ -148,23 +174,6 @@ export class TablesService {
         }
 
         player.blind = type;
-
-        return {
-            table: table.name,
-            userId: player.userId,
-            username: player.username,
-            blind: player.blind,
-        };
-    }
-    createGame(tableName: string) {
-        const table = this.findTable(tableName);
-        if (!table) {
-            throw new NotFoundException('Table non trouvée');
-        }
-
-        if (table.players.length <= 2) {
-            throw new BadRequestException('Il faut au moins 3 joueurs pour lancer une partie');
-        }
 
         table.players.forEach(player => {
             player.hand = [
@@ -181,8 +190,9 @@ export class TablesService {
                 userId: p.userId,
                 username: p.username,
                 hand: p.hand,
+                blind: p.blind,
             })),
-            
+
         };
 
         table.games.push(game);
