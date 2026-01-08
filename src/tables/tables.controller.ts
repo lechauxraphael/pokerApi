@@ -9,12 +9,14 @@ import {
     Param,
     Req,
     UseGuards,
+    UseInterceptors,
     NotFoundException,
     BadRequestException
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import type { IAuthInfoRequest } from '../auth/auth.guard';
 import { PokerAction } from './tables.types';
+import { HideOtherHandsInterceptor } from './interceptors/hide-other-hands.interceptor';
 
 @Controller('tables')
 @Dependencies(TablesService)
@@ -175,6 +177,7 @@ export class TablesController {
     // }
 
     @UseGuards(AuthGuard)
+    @UseInterceptors(HideOtherHandsInterceptor)
     @Post(':tableName/games')
     createGame(@Param('tableName') tableName: string, @Req() req: IAuthInfoRequest) {
         return this.tablesService.createGame(tableName, req.user.sub);
