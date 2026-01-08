@@ -30,13 +30,16 @@
   Récupère les infos personnelles de l’utilisateur connecté
   Profil utilisateur (privé)
 
-  💰 Argent et mises
+💰 Argent et mises
 
   GET  http://localhost:8800/api/users/me/money
   Récupère l’argent du joueur connecté (privé)
 
   POST http://localhost:8800/api/users/me/deposit { amount }
   Ajoute de l'argent sur le compte de l'utilisateur connecté(privé)
+
+  GET http://localhost:8800/api/money/:userId 
+  Récupère l’argent d’un joueur spécifique via son ID (public)
 
 🪑 Tables
 
@@ -57,6 +60,22 @@
   blindes
   statut
 
+🧩 Deck
+
+  GET → http://localhost:8800/api/tables/:tableName/deck {tableau d'objet de cartes}
+  Récupère le deck complet d'une table (attention : ne jamais exposer les cartes privées des joueurs) (privé)
+
+  🃏 Cartes
+
+  POST → http://localhost:8800/api/tables/:tableName/deck/distribute {tableau d'objet de cartes}
+  Distribue les cartes aux joueurs de la table. Chaque joueur ne verra que ses propres cartes. (privé)
+
+  POST → http://localhost:8800/api/tables/:tableName/deck/burn {card}
+  Brûle une carte du Deck (privé)
+
+  GET → http://localhost:8800/api/tables/:tableName/deck/cards/:id 
+  Récupère une carte spécifique (usage interne/serveur, pas exposer aux autres joueurs) (privé)
+
 🎮 Parties
 
   POST → http://localhost:8800/api/tables/:tableName/games
@@ -64,9 +83,6 @@
   
   GET → http://localhost:8800/api/tables/games
   Récupère toutes les parties (public)
-  
-  GET → http://localhost:8800/api/tables/:tableName/games
-  Récupèrer une partie spécifique (public)
 
  🎬 Actions
 
@@ -76,20 +92,20 @@
   POST → http://localhost:8800/api/tables/:tableName/blind {type : big, small, neutre}
   Définit le rôle du joueur connecté. Permet de savoir quel blind a un joueur. (privé)
 
-🧩 Deck
+  POST → http://localhost:8800/api/tables/:tableName/action/fold
+  Fold du joueur connecté (privé)
 
-  GET → http://localhost:8800/api/tables/:tableName/deck {tableau d'objet de cartes}
-  Récupère le deck complet d'une table (attention : ne jamais exposer les cartes privées des joueurs) (privé)
+  POST → http://localhost:8800/api/tables/:tableName/action/check
+  Check du joueur connecté (privé)
 
-🃏 Cartes
-  POST → http://localhost:8800/api/tables/:tableName/deck/distribute {tableau d'objet de cartes}
-  Distribue les cartes aux joueurs de la table. Chaque joueur ne verra que ses propres cartes. (privé)
+  POST → http://localhost:8800/api/tables/:tableName/action/call
+  Call du joueur connecté (privé)
 
-  POST → http://localhost:8800/api/tables/:tableName/deck/burn {card}
-  Brûle une carte du Deck (privé)
+  POST → http://localhost:8800/api/tables/:tableName/action/allIn
+  All-in du joueur connecté (privé)
 
-  GET → http://localhost:8800/api/tables/:tableName/deck/cards/:id 
-  Récupère une carte spécifique (usage interne/serveur, pas exposer aux autres joueurs) (privé)
+  POST → http://localhost:8800/api/tables/:tableName/action/raise { somme }
+  Raise du joueur connecté (privé)
 
   ⚙️ Déroulement typique d’une partie
 

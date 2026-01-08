@@ -17,6 +17,4 @@ export class MoneyController {
         findOnePlayer(@Param('userId') userId: number) {
             return this.moneyService.getMoney(Number(userId));
         }
-
-    
 }
